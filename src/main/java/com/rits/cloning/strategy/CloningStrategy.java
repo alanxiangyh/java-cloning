@@ -1,4 +1,4 @@
-package com.rits.cloning;
+package com.rits.cloning.strategy;
 
 import java.lang.reflect.Field;
 

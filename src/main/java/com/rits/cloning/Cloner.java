@@ -1,5 +1,10 @@
 package com.rits.cloning;
 
+import com.rits.cloning.builtin.*;
+import com.rits.cloning.exception.CloningException;
+import com.rits.cloning.strategy.CloningStrategy;
+import com.rits.cloning.strategy.InstantiationStrategy;
+import com.rits.cloning.strategy.ObjenesisInstantiationStrategy;
 import org.objenesis.instantiator.ObjectInstantiator;
 
 import java.lang.annotation.Annotation;
@@ -30,6 +35,19 @@ public class Cloner {
     private static final DeepCloner IGNORE_CLONER = new IgnoreClassCloner();
     private static final DeepCloner NULL_CLONER = new NullClassCloner();
     private static final Field[] EMPTY_FIELD_ARRAY = new Field[0];
+    private static final Set<Class<?>> BUILTIN_IMMUTABLES = Set.of(
+        void.class, Void.class,
+        byte.class, Byte.class,
+        boolean.class, Boolean.class,
+        char.class, Character.class,
+        short.class, Short.class,
+        int.class, Integer.class,
+        float.class, Float.class,
+        long.class, Long.class,
+        double.class, Double.class,
+        String.class, Class.class,
+        BigInteger.class, BigDecimal.class
+    );
     private final InstantiationStrategy instantiationStrategy;
     private final Set<Class<?>> ignored = new HashSet<>();
     private final Set<Class<?>> ignoredInstanceOf = new HashSet<>();
@@ -188,15 +206,8 @@ public class Cloner {
      */
     protected void registerKnownJdkImmutableClasses() {
         registerImmutable(String.class);
-        registerImmutable(Integer.class);
-        registerImmutable(Long.class);
         registerImmutable(Boolean.class);
         registerImmutable(Class.class);
-        registerImmutable(Float.class);
-        registerImmutable(Double.class);
-        registerImmutable(Character.class);
-        registerImmutable(Byte.class);
-        registerImmutable(Short.class);
         registerImmutable(Void.class);
 
         registerImmutable(BigDecimal.class);
@@ -408,7 +419,7 @@ public class Cloner {
         final Class<?> immutableAnnotation = getImmutableAnnotation();
         for (final Annotation annotation : clz.getDeclaredAnnotations()) {
             if (annotation.annotationType() == immutableAnnotation) {
-                immutables.put(clz, Boolean.TRUE);
+                immutables.put(clz, true);
                 return true;
             }
         }
@@ -418,14 +429,14 @@ public class Cloner {
                 if (annotation.annotationType() == Immutable.class) {
                     final Immutable im = (Immutable) annotation;
                     if (im.subClass()) {
-                        immutables.put(clz, Boolean.TRUE);
+                        immutables.put(clz, true);
                         return true;
                     }
                 }
             }
             c = c.getSuperclass();
         }
-        immutables.put(clz, Boolean.FALSE);
+        immutables.put(clz, false);
         return false;
     }
 
@@ -439,9 +450,7 @@ public class Cloner {
         // Fast path: most common immutable types - avoid all map lookups
         // These classes are final and extremely common as field values,
         // so checking them directly is faster than any map lookup
-        if (aClass == String.class || aClass == Integer.class || aClass == Long.class
-            || aClass == Boolean.class || aClass == Double.class || aClass == Class.class
-            || aClass == BigDecimal.class) {
+        if (BUILTIN_IMMUTABLES.contains(aClass)) {
             return o;
         }
 

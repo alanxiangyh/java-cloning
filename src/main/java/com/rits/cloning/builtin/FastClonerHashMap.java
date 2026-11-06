@@ -1,4 +1,7 @@
-package com.rits.cloning;
+package com.rits.cloning.builtin;
+
+import com.rits.cloning.DeepCloner;
+import com.rits.cloning.FastCloner;
 
 import java.util.HashMap;
 import java.util.Map;

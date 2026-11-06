@@ -1,4 +1,4 @@
-package com.rits.cloning;
+package com.rits.cloning.exception;
 
 /**
  * thrown if cloning fails

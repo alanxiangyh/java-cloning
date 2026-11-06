@@ -1,7 +1,7 @@
 package com.rits.tests.cloning;
 
 import com.rits.cloning.Cloner;
-import com.rits.cloning.FastClonerHashMap;
+import com.rits.cloning.builtin.FastClonerHashMap;
 import com.rits.cloning.Immutable;
 import com.rits.tests.cloning.TestCloner.SynthOuter.Inner;
 import com.rits.tests.cloning.domain.*;

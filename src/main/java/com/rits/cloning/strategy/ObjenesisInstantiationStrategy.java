@@ -1,4 +1,4 @@
-package com.rits.cloning;
+package com.rits.cloning.strategy;
 
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;

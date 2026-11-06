@@ -1,6 +1,8 @@
 package com.rits.cloning;
 
 
+import com.rits.cloning.exception.CloningException;
+
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;

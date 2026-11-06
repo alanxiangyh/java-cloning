@@ -1,8 +1,8 @@
 package com.rits.tests.cloning;
 
 import com.rits.cloning.Cloner;
-import com.rits.cloning.CloningStrategy;
-import com.rits.cloning.CloningStrategyFactory;
+import com.rits.cloning.strategy.CloningStrategy;
+import com.rits.cloning.strategy.CloningStrategyFactory;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
