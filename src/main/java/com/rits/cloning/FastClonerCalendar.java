@@ -10,13 +10,12 @@ import java.util.TimeZone;
  * <p>
  * 21 May 2009
  */
-public class FastClonerCalendar implements FastCloner {
+public class FastClonerCalendar implements FastCloner<Calendar> {
 
-    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
-        GregorianCalendar gc = new GregorianCalendar();
-        Calendar c = (Calendar) t;
-        gc.setTimeInMillis(c.getTimeInMillis());
-        gc.setTimeZone((TimeZone) c.getTimeZone().clone());
-        return gc;
+    public Calendar clone(final Calendar src, final DeepCloner cloner, final Map<Object, Object> clones) {
+        GregorianCalendar dest = new GregorianCalendar();
+        dest.setTimeInMillis(src.getTimeInMillis());
+        dest.setTimeZone((TimeZone) src.getTimeZone().clone());
+        return dest;
     }
 }

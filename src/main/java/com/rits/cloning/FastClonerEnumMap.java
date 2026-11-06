@@ -8,23 +8,21 @@ import java.util.Map;
  *
  * @author Tobias Weimer
  */
-public class FastClonerEnumMap implements FastCloner {
+public class FastClonerEnumMap implements FastCloner<EnumMap<?, ?>> {
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Object clone(final Object toBeCloned, final DeepCloner cloner, final Map<Object, Object> clones) {
-        final EnumMap<? extends Enum<?>, ?> m = (EnumMap) toBeCloned;
-
+    public EnumMap<?, ?> clone(final EnumMap<?, ?> src, final DeepCloner cloner, final Map<Object, Object> clones) {
         // make a shallow copy of the original EnumMap
         // since there is no no-arg-constructor
-        final EnumMap result = new EnumMap(m);
+        final EnumMap dest = new EnumMap(src);
 
         // Now clone the values
-        for (final Map.Entry<? extends Enum<?>, ?> e : m.entrySet()) {
+        for (final Map.Entry<? extends Enum<?>, ?> e : src.entrySet()) {
             // No need to clone the key, since it is an Enum
             // However, the value MUST be cloned
-            result.put(e.getKey(), cloner.deepClone(e.getValue(), clones));
+            dest.put(e.getKey(), cloner.deepClone(e.getValue(), clones));
         }
-        return result;
+        return dest;
     }
 }

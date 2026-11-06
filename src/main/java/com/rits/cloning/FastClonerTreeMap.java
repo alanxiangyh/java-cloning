@@ -8,15 +8,14 @@ import java.util.TreeMap;
  * <p>
  * 21 May 2009
  */
-public class FastClonerTreeMap implements FastCloner {
+public class FastClonerTreeMap implements FastCloner<TreeMap<?, ?>> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
-        final TreeMap<Object, Object> m = (TreeMap) t;
-        final TreeMap result = new TreeMap(m.comparator());
-        for (final Map.Entry e : m.entrySet()) {
-            result.put(cloner.deepClone(e.getKey(), clones), cloner.deepClone(e.getValue(), clones));
+    public TreeMap<?, ?> clone(final TreeMap<?, ?> src, final DeepCloner cloner, final Map<Object, Object> clones) {
+        final TreeMap dest = new TreeMap<>(src.comparator());
+        for (final Map.Entry<?, ?> e : src.entrySet()) {
+            dest.put(cloner.deepClone(e.getKey(), clones), cloner.deepClone(e.getValue(), clones));
         }
-        return result;
+        return dest;
     }
 }

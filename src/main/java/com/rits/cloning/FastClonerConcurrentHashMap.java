@@ -8,15 +8,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * <p>
  * 18 Oct 2011
  */
-public class FastClonerConcurrentHashMap implements FastCloner {
+public class FastClonerConcurrentHashMap implements FastCloner<ConcurrentHashMap<?, ?>> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
-        final ConcurrentHashMap<Object, Object> m = (ConcurrentHashMap) t;
-        final ConcurrentHashMap result = new ConcurrentHashMap();
-        for (final Map.Entry e : m.entrySet()) {
-            result.put(cloner.deepClone(e.getKey(), clones), cloner.deepClone(e.getValue(), clones));
+    public ConcurrentHashMap<?, ?> clone(final ConcurrentHashMap<?, ?> src, final DeepCloner cloner, final Map<Object, Object> clones) {
+        final ConcurrentHashMap dest = new ConcurrentHashMap<>();
+        for (final Map.Entry<?, ?> e : src.entrySet()) {
+            dest.put(cloner.deepClone(e.getKey(), clones), cloner.deepClone(e.getValue(), clones));
         }
-        return result;
+        return dest;
     }
 }

@@ -4,15 +4,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class FastClonerSetOf12 implements FastCloner {
+public class FastClonerSetOf12 implements FastCloner<Set<?>> {
 
-    @SuppressWarnings("rawtypes")
-    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
-        Set set = (Set) t;
-        Object[] a = set.toArray();
-        if (set.size() == 1) {
+    public Set<?> clone(final Set<?> src, final DeepCloner cloner, final Map<Object, Object> clones) {
+        Object[] a = src.toArray();
+        if (src.size() == 1) {
             return Set.of(cloner.deepClone(a[0], clones));
-        } else if (set.size() == 2) {
+        } else if (src.size() == 2) {
             Object o1 = cloner.deepClone(a[0], clones);
             Object o2 = cloner.deepClone(a[1], clones);
             return Set.of(o1, o2);

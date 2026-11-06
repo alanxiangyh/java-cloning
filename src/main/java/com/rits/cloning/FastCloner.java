@@ -9,7 +9,7 @@ import java.util.Map;
  * @author kostantinos.kougios
  * 21 May 2009
  */
-public interface FastCloner {
+public interface FastCloner<T> {
 
-    Object clone(Object t, DeepCloner cloner, Map<Object, Object> clones);
+    T clone(T src, DeepCloner cloner, Map<Object, Object> clones);
 }

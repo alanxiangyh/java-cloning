@@ -9,16 +9,15 @@ import java.util.Map;
  * 21 May 2009
  */
 @SuppressWarnings({"unchecked", "rawtypes"})
-public abstract class FastClonerCustomCollection<T extends Collection> implements FastCloner {
+public abstract class FastClonerCustomCollection<T extends Collection> implements FastCloner<T> {
 
     public abstract T getInstance(T o);
 
-    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
-        final T c = getInstance((T) t);
-        final T l = (T) t;
-        for (final Object o : l) {
-            c.add(cloner.deepClone(o, clones));
+    public T clone(final T src, final DeepCloner cloner, final Map<Object, Object> clones) {
+        final T dest = getInstance(src);
+        for (final Object o : src) {
+            dest.add(cloner.deepClone(o, clones));
         }
-        return c;
+        return dest;
     }
 }

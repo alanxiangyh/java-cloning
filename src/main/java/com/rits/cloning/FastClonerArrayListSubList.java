@@ -9,17 +9,15 @@ import java.util.Map;
  * <p>
  * 21 May 2009
  */
-public class FastClonerArrayListSubList implements FastCloner {
+public class FastClonerArrayListSubList implements FastCloner<List<?>> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
-        List al = (List) t;
-        int size = al.size();
-        ArrayList l = new ArrayList(size);
-        for (Object o : al) {
-            l.add(cloner.deepClone(o, clones));
+    public List<?> clone(final List<?> src, final DeepCloner cloner, final Map<Object, Object> clones) {
+        int size = src.size();
+        ArrayList dest = new ArrayList(size);
+        for (Object o : src) {
+            dest.add(cloner.deepClone(o, clones));
         }
-        return l;
+        return dest;
     }
-
 }

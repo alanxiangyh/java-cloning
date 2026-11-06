@@ -8,15 +8,14 @@ import java.util.Map;
  * <p>
  * 21 May 2009
  */
-public class FastClonerLinkedList implements FastCloner {
+public class FastClonerLinkedList implements FastCloner<LinkedList<?>> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
-        final LinkedList al = (LinkedList) t;
-        final LinkedList l = new LinkedList();
-        for (final Object o : al) {
-            l.add(cloner.deepClone(o, clones));
+    public LinkedList<?> clone(final LinkedList<?> src, final DeepCloner cloner, final Map<Object, Object> clones) {
+        final LinkedList dest = new LinkedList<>();
+        for (final Object o : src) {
+            dest.add(cloner.deepClone(o, clones));
         }
-        return l;
+        return dest;
     }
 }

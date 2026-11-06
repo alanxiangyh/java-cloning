@@ -4,16 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class FastClonerListOf12 implements FastCloner {
+public class FastClonerListOf12 implements FastCloner<List<?>> {
 
-    @SuppressWarnings("rawtypes")
-    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
-        List al = (List) t;
-        if (al.size() == 1) {
-            return List.of(cloner.deepClone(al.get(0), clones));
-        } else if (al.size() == 2) {
-            Object o1 = cloner.deepClone(al.get(0), clones);
-            Object o2 = cloner.deepClone(al.get(1), clones);
+    public List<?> clone(final List<?> src, final DeepCloner cloner, final Map<Object, Object> clones) {
+        if (src.size() == 1) {
+            return List.of(cloner.deepClone(src.get(0), clones));
+        } else if (src.size() == 2) {
+            Object o1 = cloner.deepClone(src.get(0), clones);
+            Object o2 = cloner.deepClone(src.get(1), clones);
             return List.of(o1, o2);
         } else {
             return new ArrayList<>();

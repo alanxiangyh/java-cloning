@@ -8,15 +8,15 @@ import java.util.Map;
  * <p>
  * 21 May 2009
  */
-public class FastClonerHashMap implements FastCloner {
+public class FastClonerHashMap implements FastCloner<HashMap<?, ?>> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
-        final HashMap<Object, Object> m = (HashMap) t;
-        final HashMap result = new HashMap();
+    public HashMap<?, ?> clone(final HashMap<?, ?> src, final DeepCloner cloner, final Map<Object, Object> clones) {
+        final HashMap<Object, Object> m = (HashMap) src;
+        final HashMap dest = new HashMap<>();
         for (final Map.Entry e : m.entrySet()) {
-            result.put(cloner.deepClone(e.getKey(), clones), cloner.deepClone(e.getValue(), clones));
+            dest.put(cloner.deepClone(e.getKey(), clones), cloner.deepClone(e.getValue(), clones));
         }
-        return result;
+        return dest;
     }
 }

@@ -35,7 +35,7 @@ public class Cloner {
     private final Set<Class<?>> ignoredInstanceOf = new HashSet<>();
     private final Set<Class<?>> nullInstead = new HashSet<>();
     private final Set<Class<? extends Annotation>> nullInsteadFieldAnnotations = new HashSet<>();
-    private final Map<Class<?>, FastCloner> fastCloners = new HashMap<>();
+    private final Map<Class<?>, FastCloner<?>> fastCloners = new HashMap<>();
     private final ConcurrentHashMap<Class<?>, Map<Field, Object /*cookie*/>> fieldsCache = new ConcurrentHashMap<>();
     private final DeepCloner deepCloner = this::cloneInternal;
     // caches immutables for quick reference
@@ -144,7 +144,7 @@ public class Cloner {
         registerInaccessibleClassToBeFastCloned("java.util.ImmutableCollections$Set12", setOf12);
     }
 
-    protected void registerInaccessibleClassToBeFastCloned(String className, FastCloner fastCloner) {
+    protected void registerInaccessibleClassToBeFastCloned(String className, FastCloner<?> fastCloner) {
         try {
             ClassLoader classLoader = getClass().getClassLoader();
             Class<?> subListClz = classLoader.loadClass(className);
@@ -154,10 +154,13 @@ public class Cloner {
         }
     }
 
-    protected Object fastClone(final Object o, final Map<Object, Object> clones) {
+    @SuppressWarnings("unchecked")
+    protected <T> T fastClone(final T o, final Map<Object, Object> clones) {
         final Class<?> c = o.getClass();
-        final FastCloner fastCloner = fastCloners.get(c);
-        if (fastCloner != null) return fastCloner.clone(o, deepCloner, clones);
+        final FastCloner<T> fastCloner = (FastCloner<T>) fastCloners.get(c);
+        if (fastCloner != null) {
+            return fastCloner.clone(o, deepCloner, clones);
+        }
         return null;
     }
 
@@ -306,7 +309,7 @@ public class Cloner {
         ignored.addAll(set);
     }
 
-    public void registerFastCloner(final Class<?> c, final FastCloner fastCloner) {
+    public void registerFastCloner(final Class<?> c, final FastCloner<?> fastCloner) {
         if (fastCloners.containsKey(c)) throw new IllegalArgumentException(c + " already fast-cloned!");
         fastCloners.put(c, fastCloner);
     }
@@ -480,7 +483,7 @@ public class Cloner {
         } else if (clz.isArray()) {
             return new CloneArrayCloner(clz);
         } else {
-            final FastCloner fastCloner = fastCloners.get(clz);
+            final FastCloner<?> fastCloner = fastCloners.get(clz);
             if (fastCloner != null) {
                 return new FastClonerCloner(fastCloner);
             } else {
@@ -684,16 +687,16 @@ public class Cloner {
 
     private class FastClonerCloner implements DeepCloner {
 
-        private final FastCloner fastCloner;
+        private final FastCloner<?> fastCloner;
         private final DeepCloner cloneInternal;
 
-        FastClonerCloner(FastCloner fastCloner) {
+        FastClonerCloner(FastCloner<?> fastCloner) {
             this.fastCloner = fastCloner;
             this.cloneInternal = deepCloner;
         }
 
         public <T> T deepClone(T o, Map<Object, Object> clones) {
-            @SuppressWarnings("unchecked") T clone = (T) fastCloner.clone(o, cloneInternal, clones);
+            @SuppressWarnings("unchecked") T clone = ((FastCloner<T>) fastCloner).clone(o, cloneInternal, clones);
             if (clones != null) clones.put(o, clone);
             return clone;
         }

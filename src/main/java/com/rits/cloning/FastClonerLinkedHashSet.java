@@ -8,16 +8,15 @@ import java.util.Map;
  *
  * @author Tobias Weimer
  */
-public class FastClonerLinkedHashSet implements FastCloner {
+public class FastClonerLinkedHashSet implements FastCloner<LinkedHashSet<?>> {
 
     @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
-        final LinkedHashSet<?> al = (LinkedHashSet) t;
-        final LinkedHashSet l = new LinkedHashSet();
-        for (final Object o : al) {
-            l.add(cloner.deepClone(o, clones));
+    public LinkedHashSet<?> clone(final LinkedHashSet<?> src, final DeepCloner cloner, final Map<Object, Object> clones) {
+        final LinkedHashSet dest = new LinkedHashSet<>();
+        for (final Object o : src) {
+            dest.add(cloner.deepClone(o, clones));
         }
-        return l;
+        return dest;
     }
 }
