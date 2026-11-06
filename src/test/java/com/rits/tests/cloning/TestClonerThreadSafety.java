@@ -14,65 +14,58 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 /**
  * test thread safety of cloner
- * 
- * @author kostantinos.kougios
  *
+ * @author kostantinos.kougios
+ * <p>
  * 18 Jan 2009
  */
-public class TestClonerThreadSafety
-{
-	private static final Cloner	cloner	= new Cloner(); // use 1 cloner for all tests (all threads)
+public class TestClonerThreadSafety {
 
-	@Execution(ExecutionMode.CONCURRENT)
-	@RepeatedTest(80)
-	public void testCloner()
-	{
-		final Random r = new Random();
-		for (int i = 0; i < 10000; i++)
-		{
-			final Calendar cal = Calendar.getInstance();
-			final Calendar clone = cloner.deepClone(cal);
-			assertNotSame(cal, clone);
-			assertNotSame(cal.getTime(), clone.getTime());
+    private static final Cloner cloner = new Cloner(); // use 1 cloner for all tests (all threads)
+
+    @Execution(ExecutionMode.CONCURRENT)
+    @RepeatedTest(80)
+    public void testCloner() {
+        final Random r = new Random();
+        for (int i = 0; i < 10000; i++) {
+            final Calendar cal = Calendar.getInstance();
+            final Calendar clone = cloner.deepClone(cal);
+            assertNotSame(cal, clone);
+            assertNotSame(cal.getTime(), clone.getTime());
             assertEquals(cal, clone);
 
-			if (r.nextBoolean())
-			{
-				Thread.yield();
-			}
-			final List<Calendar> l = new ArrayList<>();
-			l.add(cal);
-			l.add(Calendar.getInstance());
-			final List<Calendar> lClone = cloner.deepClone(l);
-			assertNotSame(l, lClone);
-			assertEquals(l.size(), lClone.size());
-			assertEquals(l.get(0), lClone.get(0));
-			assertEquals(l.get(1), lClone.get(1));
-			if (r.nextBoolean())
-			{
-				Thread.yield();
-			}
-			try
-			{
-				final URL url = new URL("http://localhost");
-				assertEquals(url, cloner.deepClone(url));
-			} catch (final MalformedURLException e)
-			{
-				throw new RuntimeException(e);
-			}
-			final TreeMap<String, Object> m = new TreeMap<>();
-			m.put("cal", cal);
-			m.put("clone", clone);
-			final TreeMap<String, Object> dm = cloner.deepClone(m);
-			assertEquals(m.size(), dm.size());
-			assertNotSame(m.get("cal"), dm.get("cal"));
-			assertEquals(m.get("cal"), dm.get("cal"));
-			assertNotSame(m.get("clone"), dm.get("clone"));
-			assertEquals(m.get("clone"), dm.get("clone"));
-			if (r.nextBoolean())
-			{
-				Thread.yield();
-			}
-		}
-	}
+            if (r.nextBoolean()) {
+                Thread.yield();
+            }
+            final List<Calendar> l = new ArrayList<>();
+            l.add(cal);
+            l.add(Calendar.getInstance());
+            final List<Calendar> lClone = cloner.deepClone(l);
+            assertNotSame(l, lClone);
+            assertEquals(l.size(), lClone.size());
+            assertEquals(l.get(0), lClone.get(0));
+            assertEquals(l.get(1), lClone.get(1));
+            if (r.nextBoolean()) {
+                Thread.yield();
+            }
+            try {
+                final URL url = new URL("http://localhost");
+                assertEquals(url, cloner.deepClone(url));
+            } catch (final MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
+            final TreeMap<String, Object> m = new TreeMap<>();
+            m.put("cal", cal);
+            m.put("clone", clone);
+            final TreeMap<String, Object> dm = cloner.deepClone(m);
+            assertEquals(m.size(), dm.size());
+            assertNotSame(m.get("cal"), dm.get("cal"));
+            assertEquals(m.get("cal"), dm.get("cal"));
+            assertNotSame(m.get("clone"), dm.get("clone"));
+            assertEquals(m.get("clone"), dm.get("clone"));
+            if (r.nextBoolean()) {
+                Thread.yield();
+            }
+        }
+    }
 }

@@ -1,0 +1,26 @@
+package com.rits.cloning.exception;
+
+/**
+ * thrown if cloning fails
+ *
+ * @author kostantinos.kougios
+ * <p>
+ * 18 Jan 2009
+ */
+public class CloningException extends RuntimeException {
+
+    private static final long serialVersionUID = 3815175312001146867L;
+
+    public CloningException(final String message, final Throwable cause) {
+        super(message, cause);
+
+    }
+
+    public CloningException(String message) {
+        super(message);
+    }
+
+    public CloningException(Exception e) {
+        super(e);
+    }
+}

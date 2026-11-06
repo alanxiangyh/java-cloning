@@ -37,6 +37,11 @@
 	</issueManagement>
 	<developers>
 		<developer>
+			<name>Alan Xiang</name>
+			<email>axiangyh@cs.washington.edu</email>
+			<url>https://github.com/alanxiangyh</url>
+		</developer>
+		<developer>
 			<name>Chad Wilson</name>
 			<email>29788154+chadlwilson@users.noreply.github.com</email>
 			<url>https://github.com/chadlwilson</url>

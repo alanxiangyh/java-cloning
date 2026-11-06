@@ -5,7 +5,7 @@ package com.rits.cloning;
  * <p>
  * 15 Nov 2010
  */
-public interface IFreezable {
-	boolean isFrozen();
+public interface Freezable {
 
+    boolean isFrozen();
 }

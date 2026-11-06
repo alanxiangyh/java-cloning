@@ -9,27 +9,29 @@ import org.junit.jupiter.api.Test;
  */
 public class TestClassInheritanceStatics {
 
-	static class Parent {
-		private String instanceFieldParent;
-		private static String staticFieldParent;
-	}
+    @Test
+    public void testStaticFields_Parent() {
+        Cloner cloner = new Cloner();
+        cloner.registerStaticFields(Parent.class);
+        // Works fine
+    }
 
-	static class Child extends Parent {
-		private String instanceFieldChild;
-		private static String staticFieldChild;
-	}
+    @Test
+    public void testStaticFields_Child() {
+        Cloner cloner = new Cloner();
+        cloner.registerStaticFields(Child.class);
+        // Fails
+    }
 
-	@Test
-	public void testStaticFields_Parent() {
-		Cloner cloner = new Cloner();
-		cloner.registerStaticFields(Parent.class);
-		// Works fine
-	}
+    static class Parent {
 
-	@Test
-	public void testStaticFields_Child() {
-		Cloner cloner = new Cloner();
-		cloner.registerStaticFields(Child.class);
-		// Fails
-	}
+        private static String staticFieldParent;
+        private String instanceFieldParent;
+    }
+
+    static class Child extends Parent {
+
+        private static String staticFieldChild;
+        private String instanceFieldChild;
+    }
 }

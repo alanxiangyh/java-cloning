@@ -2,44 +2,37 @@ package com.rits.tests.cloning.domain;
 
 /**
  * @author kostantinos.kougios
- *
+ * <p>
  * 30 Nov 2009
  */
-public class C
-{
-	private int		x		= 5;
-	private String	name	= "kostas";
+public class C {
 
-	public int getX()
-	{
-		return x;
-	}
+    private int x = 5;
+    private String name = "kostas";
+    private int y = 7;
 
-	public void setX(final int x)
-	{
-		this.x = x;
-	}
+    public int getX() {
+        return x;
+    }
 
-	public String getName()
-	{
-		return name;
-	}
+    public void setX(final int x) {
+        this.x = x;
+    }
 
-	public void setName(final String name)
-	{
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	private int	y	= 7;
+    public void setName(final String name) {
+        this.name = name;
+    }
 
-	public int getY()
-	{
-		return y;
-	}
+    public int getY() {
+        return y;
+    }
 
-	public void setY(final int y)
-	{
-		this.y = y;
-	}
+    public void setY(final int y) {
+        this.y = y;
+    }
 
 }

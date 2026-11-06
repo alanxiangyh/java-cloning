@@ -10,45 +10,42 @@ import static org.junit.jupiter.api.Assertions.assertSame;
  * @author kostantinos.kougios
  * 23 Sep 2012
  */
-public class CloneInnerAnonTest
-{
-	class TestInner
-	{
-		public Object o = new Object();
+public class CloneInnerAnonTest {
 
-		public CloneInnerAnonTest parent = CloneInnerAnonTest.this;
+    @Test
+    public void dontCloneParentOfInnerClassesPositive() {
 
-		public CloneInnerAnonTest getParent()
-		{
-			return CloneInnerAnonTest.this;
-		}
-	}
+        final Cloner cl = new Cloner();
+        cl.setCloneAnonymousParent(false);
 
-	@Test
-	public void dontCloneParentOfInnerClassesPositive()
-	{
+        final TestInner test = new TestInner();
+        final TestInner testCloned = cl.deepClone(test);
+        assertNotSame(this, testCloned.parent);
+        assertNotSame(test.o, testCloned.o);
+        assertSame(test.getParent(), testCloned.getParent());
+    }
 
-		final Cloner cl = new Cloner();
-		cl.setCloneAnonymousParent(false);
+    @Test
+    public void dontCloneParentOfInnerClassesNegative() {
 
-		final TestInner test = new TestInner();
-		final TestInner testCloned = cl.deepClone(test);
-		assertNotSame(this, testCloned.parent);
-		assertNotSame(test.o, testCloned.o);
-		assertSame(test.getParent(), testCloned.getParent());
-	}
+        final Cloner cl = new Cloner();
+        cl.setCloneAnonymousParent(true);
 
-	@Test
-	public void dontCloneParentOfInnerClassesNegative()
-	{
+        final TestInner test = new TestInner();
+        final TestInner testCloned = cl.deepClone(test);
+        assertNotSame(this, testCloned.parent);
+        assertNotSame(test.o, testCloned.o);
+        assertNotSame(test.getParent(), testCloned.getParent());
+    }
 
-		final Cloner cl = new Cloner();
-		cl.setCloneAnonymousParent(true);
+    class TestInner {
 
-		final TestInner test = new TestInner();
-		final TestInner testCloned = cl.deepClone(test);
-		assertNotSame(this, testCloned.parent);
-		assertNotSame(test.o, testCloned.o);
-		assertNotSame(test.getParent(), testCloned.getParent());
-	}
+        public Object o = new Object();
+
+        public CloneInnerAnonTest parent = CloneInnerAnonTest.this;
+
+        public CloneInnerAnonTest getParent() {
+            return CloneInnerAnonTest.this;
+        }
+    }
 }

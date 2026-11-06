@@ -12,6 +12,7 @@ import java.util.Collection;
  * 30 Nov 2009
  */
 public class Perspectives {
+
     private final Cloner cloner;
 
     public Perspectives(final Cloner cloner) {
