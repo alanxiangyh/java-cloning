@@ -585,6 +585,9 @@ public class Cloner {
             List<Field> fields = allFields(c);
             m = new HashMap<>();
             for (final Field field : fields) {
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
                 m.put(field, Fields.ACCESSOR.getCookie(field));
             }
             Map<Field, Object> m0 = fieldsCache.putIfAbsent(c, m);
