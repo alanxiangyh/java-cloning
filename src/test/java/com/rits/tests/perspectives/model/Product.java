@@ -2,50 +2,43 @@ package com.rits.tests.perspectives.model;
 
 /**
  * @author kostantinos.kougios
- *
+ * <p>
  * 30 Nov 2009
  */
-public class Product
-{
-	private final int		id;
-	private final String	sku;
-	private final String	title;
+public class Product {
 
-	public Product(final int id, final String sku, final String title)
-	{
-		this.id = id;
-		this.sku = sku;
-		this.title = title;
-	}
+    private final int id;
+    private final String sku;
+    private final String title;
 
-	public int getId()
-	{
-		return id;
-	}
+    public Product(final int id, final String sku, final String title) {
+        this.id = id;
+        this.sku = sku;
+        this.title = title;
+    }
 
-	public String getSku()
-	{
-		return sku;
-	}
+    public int getId() {
+        return id;
+    }
 
-	public String getTitle()
-	{
-		return title;
-	}
+    public String getSku() {
+        return sku;
+    }
 
-	@Override
-	public String toString()
-	{
-		return "product:" + sku;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	@Override
-	public boolean equals(final Object obj)
-	{
-		if (obj instanceof Product p)
-		{
-			return p.getSku().equals(sku);
-		}
-		return super.equals(obj);
-	}
+    @Override
+    public String toString() {
+        return "product:" + sku;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj instanceof Product p) {
+            return p.getSku().equals(sku);
+        }
+        return super.equals(obj);
+    }
 }

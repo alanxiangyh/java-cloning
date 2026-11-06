@@ -16,10 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * 30 Nov 2009
  */
 public class TestPerspectives {
+
     private final Cloner cloner = new Cloner();
     private final Perspectives perspectives = new Perspectives(cloner);
 
-	@Test
+    @Test
     public void testViewAs() {
         // we somehow fetch a product, i.e. from the database
         final Product product = new Product(5, "mouse", "a 3-button mouse");
@@ -37,7 +38,7 @@ public class TestPerspectives {
         assertEquals(5, orderedProduct.getQty());
     }
 
-	@Test
+    @Test
     public void testViewAs2ExtendedSubclasses() {
         final Product relatedProduct = new RelatedProduct(8, "X5", "RX5");
         final OrderedProduct op = perspectives.viewAs(OrderedProduct.class, relatedProduct);
@@ -46,13 +47,13 @@ public class TestPerspectives {
         assertEquals(relatedProduct.getTitle(), op.getTitle());
     }
 
-	@Test
+    @Test
     public void testViewAsNull() {
         final OrderedProduct op = perspectives.viewAs(OrderedProduct.class, null);
         assertNull(op);
     }
 
-	@Test
+    @Test
     public void testViewCollectionAs() {
         final Product p1 = new Product(1, "mouse1", "a mouse");
         final Product p2 = new Product(2, "mouse2", "an other mouse");
@@ -67,7 +68,7 @@ public class TestPerspectives {
         assertEquals(products.get(2), orderedProducts.get(2));
     }
 
-	@Test
+    @Test
     public void testViewNullCollectionAs() {
         final OrderedProducts orderedProducts = perspectives.viewCollectionAs(new OrderedProducts(), OrderedProduct.class, null);
         assertNull(orderedProducts);

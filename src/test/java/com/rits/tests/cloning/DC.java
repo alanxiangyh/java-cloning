@@ -2,39 +2,34 @@ package com.rits.tests.cloning;
 
 /**
  * @author kostantinos.kougios
- *
+ * <p>
  * 7 Apr 2009
  */
 @SuppressWarnings("UnusedAssignment")
-public class DC implements Comparable<DC>
-{
-	public int	id	= -1;
+public class DC implements Comparable<DC> {
 
-	public DC(final int id)
-	{
-		this.id = id;
-	}
+    public int id = -1;
 
-	public int compareTo(final DC o)
-	{
-		return id - o.id;
-	}
+    public DC(final int id) {
+        this.id = id;
+    }
 
-	@Override
-	public int hashCode()
-	{
-		return id;
-	}
+    public int compareTo(final DC o) {
+        return id - o.id;
+    }
 
-	@Override
-	public boolean equals(final Object obj)
-	{
-		return ((DC) obj).id == id;
-	}
+    @Override
+    public int hashCode() {
+        return id;
+    }
 
-	@Override
-	public String toString()
-	{
-		return "DC: id:" + id;
-	}
+    @Override
+    public boolean equals(final Object obj) {
+        return ((DC) obj).id == id;
+    }
+
+    @Override
+    public String toString() {
+        return "DC: id:" + id;
+    }
 }

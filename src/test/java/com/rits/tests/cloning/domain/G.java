@@ -2,29 +2,26 @@ package com.rits.tests.cloning.domain;
 
 /**
  * @author kostantinos.kougios
- *
+ * <p>
  * 1 Apr 2011
  */
 @SuppressWarnings("ClassCanBeRecord")
-public class G
-{
-	private final A	a;
-	private final B	b;
+public class G {
 
-	public G(final A a, final B b)
-	{
-		this.a = a;
-		this.b = b;
-	}
+    private final A a;
+    private final B b;
 
-	public A getA()
-	{
-		return a;
-	}
+    public G(final A a, final B b) {
+        this.a = a;
+        this.b = b;
+    }
 
-	public B getB()
-	{
-		return b;
-	}
+    public A getA() {
+        return a;
+    }
+
+    public B getB() {
+        return b;
+    }
 
 }

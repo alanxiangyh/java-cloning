@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class FastClonerListOf12 implements IFastCloner {
+public class FastClonerListOf12 implements FastCloner {
+
     @SuppressWarnings("rawtypes")
-    public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {
+    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
         List al = (List) t;
         if (al.size() == 1) {
             return List.of(cloner.deepClone(al.get(0), clones));

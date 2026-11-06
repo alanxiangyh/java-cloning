@@ -28,21 +28,12 @@ import static org.junit.jupiter.api.Assertions.*;
  * 18 Sep 2008
  */
 public class TestCloner {
+
     private final Cloner cloner = new Cloner();
 
     @BeforeEach
     void setup() {
         cloner.setDumpClonedClasses(false);
-    }
-
-    @Target(TYPE)
-    @Retention(RUNTIME)
-    private @interface MyImmutable {
-
-    }
-
-    @MyImmutable
-    static private class MyAX {
     }
 
     @Test
@@ -112,28 +103,6 @@ public class TestCloner {
         assertSame(o, c);
     }
 
-    @SuppressWarnings("ALL")
-    class X {
-        private X(int x) {
-            x = 5;
-        }
-    }
-
-    @Immutable(subClass = true)
-    static public class ATestImmutable {
-    }
-
-    static public class ATestImmutableSubclass extends ATestImmutable {
-
-    }
-
-    @Immutable
-    static public class BTestImmutable {
-    }
-
-    static public class BTestImmutableSubclass extends BTestImmutable {
-    }
-
     @Test
     public void testIssue7() {
         final HashMap<Object, Object> source = new HashMap<>();
@@ -185,6 +154,7 @@ public class TestCloner {
         final Object o1 = new Object();
         final Object o2 = new Object();
         class OO {
+
             Object o1, o2, o3, o4;
         }
         final OO oo = new OO();
@@ -249,44 +219,6 @@ public class TestCloner {
         }
     }
 
-    private class Simple {
-        private int x = 1;
-        private String s = "simple";
-        private Complex complex;
-
-        public Complex getComplex() {
-            return complex;
-        }
-
-        public void setComplex(final Complex complex) {
-            this.complex = complex;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public void setX(final int x) {
-            this.x = x;
-        }
-
-        public String getS() {
-            return s;
-        }
-
-        public void setS(final String s) {
-            this.s = s;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (obj instanceof Simple si) {
-				return si.getS().equals(getS()) && si.getX() == getX();
-            }
-            return super.equals(obj);
-        }
-    }
-
     /**
      * tests cloning of a simple class
      */
@@ -303,43 +235,7 @@ public class TestCloner {
         simple.setX(30);
         assertNotSame(simple.getS(), clone.getS());
         assertNotEquals(simple.getS(), clone.getS());
-		assertNotSame(simple.getX(), clone.getX());
-    }
-
-    protected class Complex {
-        private int x = 1;
-        private String s = "complex";
-        private final List<Simple> l = new ArrayList<>();
-
-        public Complex() {
-            l.add(new Simple());
-            final Simple simple = new Simple();
-            simple.setS("s2");
-            simple.setX(30);
-            l.add(simple);
-            simple.setComplex(this);
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public void setX(final int x) {
-            this.x = x;
-        }
-
-        public String getS() {
-            return s;
-        }
-
-        public List<Simple> getL() {
-            return l;
-        }
-
-        public void setS(final String s) {
-            this.s = s;
-        }
-
+        assertNotSame(simple.getX(), clone.getX());
     }
 
     /**
@@ -380,7 +276,7 @@ public class TestCloner {
         shallowClone.setX(10);
         assertTrue(shallowClone.getX() != simple1.getX());
         shallowClone.setS("x");
-		assertNotSame(shallowClone.getS(), simple1.getS());
+        assertNotSame(shallowClone.getS(), simple1.getS());
     }
 
     @Test
@@ -670,20 +566,6 @@ public class TestCloner {
         assertSame(cgab.getA(), a);
     }
 
-    static class SynthOuter {
-        public Inner getInner() {
-            return new Inner();
-        }
-
-        class Inner {
-            Object x = new Object();
-
-            public SynthOuter getOuter() {
-                return SynthOuter.this;
-            }
-        }
-    }
-
     @Test
     public void testDontCloneSynthetic() {
         final Cloner cloner = new Cloner();
@@ -871,7 +753,6 @@ public class TestCloner {
         assertEquals(originalMap, clonedMap, "Cloned EnumMap not equal to original EnumMap");
     }
 
-
     /**
      * Test case for non empty EnumMap
      */
@@ -916,7 +797,7 @@ public class TestCloner {
         set.add(new Object());
 
         Set<Object> clonedSet = cloner.deepClone(set);
-		assertInstanceOf(LinkedHashSet.class, clonedSet, "Cloned LinkedHashSet not instanceof LinkedHashSet");
+        assertInstanceOf(LinkedHashSet.class, clonedSet, "Cloned LinkedHashSet not instanceof LinkedHashSet");
 
 
         Object first = clonedSet.toArray()[0];
@@ -937,7 +818,6 @@ public class TestCloner {
         assertNotSame(originalSet, clonedSet, "Cloned LinkedHashSet same as original one");
         assertEquals(originalSet, clonedSet, "Cloned LinkedHashSet not equal to original one");
     }
-
 
     /**
      * Test if insertion order of LinkedhashSet is the same
@@ -981,6 +861,7 @@ public class TestCloner {
     @Test
     public void testStaticTransient() {
         class StaticTransient extends ArrayList<String> {
+
         }
 
         cloner.deepClone(new StaticTransient());
@@ -994,16 +875,146 @@ public class TestCloner {
         assertNotSame(f, cloned);
     }
 
-    private static class ClassWithEnum {
-        TimeUnit timeUnit;
-    }
-
     @Test
     public void testClassWithEnum() {
         ClassWithEnum a = new ClassWithEnum();
         a.timeUnit = TimeUnit.SECONDS;
         ClassWithEnum b = cloner.deepClone(a);
         assertSame(TimeUnit.SECONDS, b.timeUnit);
+    }
+
+    @Target(TYPE)
+    @Retention(RUNTIME)
+    private @interface MyImmutable {
+
+    }
+
+    @MyImmutable
+    static private class MyAX {
+
+    }
+
+    @Immutable(subClass = true)
+    static public class ATestImmutable {
+
+    }
+
+    static public class ATestImmutableSubclass extends ATestImmutable {
+
+    }
+
+    @Immutable
+    static public class BTestImmutable {
+
+    }
+
+    static public class BTestImmutableSubclass extends BTestImmutable {
+
+    }
+
+    static class SynthOuter {
+
+        public Inner getInner() {
+            return new Inner();
+        }
+
+        class Inner {
+
+            Object x = new Object();
+
+            public SynthOuter getOuter() {
+                return SynthOuter.this;
+            }
+        }
+    }
+
+    private static class ClassWithEnum {
+
+        TimeUnit timeUnit;
+    }
+
+    @SuppressWarnings("ALL")
+    class X {
+
+        private X(int x) {
+            x = 5;
+        }
+    }
+
+    private class Simple {
+
+        private int x = 1;
+        private String s = "simple";
+        private Complex complex;
+
+        public Complex getComplex() {
+            return complex;
+        }
+
+        public void setComplex(final Complex complex) {
+            this.complex = complex;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(final int x) {
+            this.x = x;
+        }
+
+        public String getS() {
+            return s;
+        }
+
+        public void setS(final String s) {
+            this.s = s;
+        }
+
+        @Override
+        public boolean equals(final Object obj) {
+            if (obj instanceof Simple si) {
+                return si.getS().equals(getS()) && si.getX() == getX();
+            }
+            return super.equals(obj);
+        }
+    }
+
+    protected class Complex {
+
+        private final List<Simple> l = new ArrayList<>();
+        private int x = 1;
+        private String s = "complex";
+
+        public Complex() {
+            l.add(new Simple());
+            final Simple simple = new Simple();
+            simple.setS("s2");
+            simple.setX(30);
+            l.add(simple);
+            simple.setComplex(this);
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public void setX(final int x) {
+            this.x = x;
+        }
+
+        public String getS() {
+            return s;
+        }
+
+        public void setS(final String s) {
+            this.s = s;
+        }
+
+        public List<Simple> getL() {
+            return l;
+        }
+
     }
 }
 

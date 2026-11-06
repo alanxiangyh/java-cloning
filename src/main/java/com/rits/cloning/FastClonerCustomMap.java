@@ -5,21 +5,21 @@ import java.util.Set;
 
 /**
  * @author kostantinos.kougios
- *
+ * <p>
  * 21 May 2009
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
-public abstract class FastClonerCustomMap<T extends Map> implements IFastCloner
-{
-    public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {
-		final T m = (T) t;
-		final T result = getInstance((T) t);
-		final Set<Map.Entry<Object, Object>> entrySet = m.entrySet();
-		for (final Map.Entry e : entrySet) {
-			result.put(cloner.deepClone(e.getKey(), clones), cloner.deepClone(e.getValue(), clones));
-		}
-		return result;
-	}
+@SuppressWarnings({"unchecked", "rawtypes"})
+public abstract class FastClonerCustomMap<T extends Map> implements FastCloner {
 
-	protected abstract T getInstance(T t);
+    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
+        final T m = (T) t;
+        final T result = getInstance((T) t);
+        final Set<Map.Entry<Object, Object>> entrySet = m.entrySet();
+        for (final Map.Entry e : entrySet) {
+            result.put(cloner.deepClone(e.getKey(), clones), cloner.deepClone(e.getValue(), clones));
+        }
+        return result;
+    }
+
+    protected abstract T getInstance(T t);
 }

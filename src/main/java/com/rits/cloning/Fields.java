@@ -26,6 +26,43 @@ import java.util.function.Supplier;
  * @since December 2024
  */
 class Fields {
+
+    /**
+     * The configured {@link Accessor} for accessing fields.
+     */
+    static final Accessor<Object> ACCESSOR = AccessorType.resolve(AccessorType.valueOf(System.getProperty(
+        Fields.class.getName() + ".accessor", AccessorType.HANDLES.name()).trim().toUpperCase()));
+
+    /**
+     * Blocked constructor.
+     */
+    private Fields() {
+    }
+
+    static <T> T handleWithContext(Field field, Supplier<T> action) {
+        try {
+            return action.get();
+        } catch (SecurityException | IllegalArgumentException e) {
+            throw cloningExceptionFor(field, e);
+        } catch (CloningException e) {
+            throw cloningExceptionFor(field, e.getCause());
+        }
+    }
+
+    static void handleWithContext(Field field, ThrowingRunnable action) {
+        try {
+            action.run();
+        } catch (SecurityException | IllegalArgumentException | ReflectiveOperationException e) {
+            throw cloningExceptionFor(field, e);
+        } catch (CloningException e) {
+            throw cloningExceptionFor(field, e.getCause());
+        }
+    }
+
+    private static CloningException cloningExceptionFor(Field field, Throwable t) {
+        return new CloningException(String.format("No access to field [%s] [%s] within class [%s]", field.getType(), field.getName(), field.getDeclaringClass()), t);
+    }
+
     /**
      * Available {@link Accessor} types.
      */
@@ -39,23 +76,12 @@ class Fields {
          */
         @SuppressWarnings("rawtypes")
         private static Accessor<Object> resolve(AccessorType type) {
-			return switch (type) {
-		        case AUTO, HANDLES -> (Accessor) VarHandleAccessor.INSTANCE;
-		        case REFLECTION -> (Accessor) ReflectionAccessor.INSTANCE;
-			};
+            return switch (type) {
+                case AUTO, HANDLES -> (Accessor) VarHandleAccessor.INSTANCE;
+                case REFLECTION -> (Accessor) ReflectionAccessor.INSTANCE;
+            };
         }
     }
-
-    /**
-     * The configured {@link Accessor} for accessing fields.
-     */
-    static final Accessor<Object> ACCESSOR = AccessorType.resolve(AccessorType.valueOf(System.getProperty(
-            Fields.class.getName() + ".accessor", AccessorType.HANDLES.name()).trim().toUpperCase()));
-
-    /**
-     * Blocked constructor.
-     */
-    private Fields() {}
 
     /**
      * Interface for accessing fields of objects.
@@ -63,6 +89,7 @@ class Fields {
      * @param <C> the cookie type for this accessor
      */
     interface Accessor<C> {
+
         /**
          * Return the cookie for a given field.
          *
@@ -74,9 +101,9 @@ class Fields {
         /**
          * Return the specified field from the source object.
          *
-         * @param field the field to get
+         * @param field  the field to get
          * @param cookie the field {@link #getCookie cookie}
-         * @param src the object to get the field value from
+         * @param src    the object to get the field value from
          * @return the field value
          */
         Object get(Field field, C cookie, Object src) throws IllegalAccessException;
@@ -84,26 +111,27 @@ class Fields {
         /**
          * Set the specified field in the destination object.
          *
-         * @param field the field to set
+         * @param field  the field to set
          * @param cookie the field {@link #getCookie cookie}
-         * @param dst the object to set the field in
-         * @param value the new value for the field
+         * @param dst    the object to set the field in
+         * @param value  the new value for the field
          */
         void set(Field field, C cookie, Object dst, Object value) throws IllegalAccessException;
 
         /**
          * Copy (shallow clone) the specified field from the source to destination object.
          *
-         * @param field the field to copy
+         * @param field  the field to copy
          * @param cookie the field {@link #getCookie cookie}
-         * @param src the source object
-         * @param dst the destination object
+         * @param src    the source object
+         * @param dst    the destination object
          */
         void copy(Field field, C cookie, Object src, Object dst) throws IllegalAccessException;
     }
 
     @FunctionalInterface
     interface ThrowingRunnable {
+
         void run() throws IllegalAccessException;
     }
 
@@ -111,6 +139,7 @@ class Fields {
      * Legacy reflection based {@link Accessor}.
      */
     private static class ReflectionAccessor implements Accessor<Field> {
+
         private static final ReflectionAccessor INSTANCE = new ReflectionAccessor();
 
         @Override
@@ -132,16 +161,16 @@ class Fields {
         @Override
         public void copy(Field field, Field cookie, Object src, Object dst) throws IllegalAccessException {
             Class<?> t = field.getType();
-            if      (!t.isPrimitive()  ) cookie.set       (dst, cookie.get       (src));
-            else if (t == int.class    ) cookie.setInt    (dst, cookie.getInt    (src));
-            else if (t == long.class   ) cookie.setLong   (dst, cookie.getLong   (src));
+            if (!t.isPrimitive()) cookie.set(dst, cookie.get(src));
+            else if (t == int.class) cookie.setInt(dst, cookie.getInt(src));
+            else if (t == long.class) cookie.setLong(dst, cookie.getLong(src));
             else if (t == boolean.class) cookie.setBoolean(dst, cookie.getBoolean(src));
-            else if (t == double.class ) cookie.setDouble (dst, cookie.getDouble (src));
-            else if (t == float.class  ) cookie.setFloat  (dst, cookie.getFloat  (src));
-            else if (t == char.class   ) cookie.setChar   (dst, cookie.getChar   (src));
-            else if (t == byte.class   ) cookie.setByte   (dst, cookie.getByte   (src));
-            else if (t == short.class  ) cookie.setShort  (dst, cookie.getShort  (src));
-            else                         cookie.set       (dst, cookie.get       (src));
+            else if (t == double.class) cookie.setDouble(dst, cookie.getDouble(src));
+            else if (t == float.class) cookie.setFloat(dst, cookie.getFloat(src));
+            else if (t == char.class) cookie.setChar(dst, cookie.getChar(src));
+            else if (t == byte.class) cookie.setByte(dst, cookie.getByte(src));
+            else if (t == short.class) cookie.setShort(dst, cookie.getShort(src));
+            else cookie.set(dst, cookie.get(src));
         }
     }
 
@@ -149,6 +178,7 @@ class Fields {
      * {@link VarHandle} implementation of {@link Accessor} avoiding per invocation access checks made with reflection.
      */
     private static class VarHandleAccessor implements Accessor<VarHandle> {
+
         private static final VarHandleAccessor INSTANCE = new VarHandleAccessor();
 
         /**
@@ -186,8 +216,8 @@ class Fields {
         public Object get(Field field, VarHandle h, Object src) {
             boolean v = Modifier.isVolatile(field.getModifiers());
             return src == null
-                    ? v ? h.getVolatile()    : h.get()
-                    : v ? h.getVolatile(src) : h.get(src);
+                ? v ? h.getVolatile() : h.get()
+                : v ? h.getVolatile(src) : h.get(src);
         }
 
         @Override
@@ -216,40 +246,16 @@ class Fields {
             boolean v = Modifier.isVolatile(mods);
 
             // the seemingly needless casts allow VarHandle to optimize out the autoboxing and its garbage
-            if      (!t.isPrimitive()  ) hand.set(dst, v ?           hand.getVolatile(src) :           hand.get(src));
-            else if (t == int.class    ) hand.set(dst, v ?     (int) hand.getVolatile(src) :     (int) hand.get(src));
-            else if (t == long.class   ) hand.set(dst, v ?    (long) hand.getVolatile(src) :    (long) hand.get(src));
+            if (!t.isPrimitive()) hand.set(dst, v ? hand.getVolatile(src) : hand.get(src));
+            else if (t == int.class) hand.set(dst, v ? (int) hand.getVolatile(src) : (int) hand.get(src));
+            else if (t == long.class) hand.set(dst, v ? (long) hand.getVolatile(src) : (long) hand.get(src));
             else if (t == boolean.class) hand.set(dst, v ? (boolean) hand.getVolatile(src) : (boolean) hand.get(src));
-            else if (t == double.class ) hand.set(dst, v ?  (double) hand.getVolatile(src) :  (double) hand.get(src));
-            else if (t == float.class  ) hand.set(dst, v ?   (float) hand.getVolatile(src) :   (float) hand.get(src));
-            else if (t == char.class   ) hand.set(dst, v ?    (char) hand.getVolatile(src) :    (char) hand.get(src));
-            else if (t == byte.class   ) hand.set(dst, v ?    (byte) hand.getVolatile(src) :    (byte) hand.get(src));
-            else if (t == short.class  ) hand.set(dst, v ?   (short) hand.getVolatile(src) :   (short) hand.get(src));
-            else                         hand.set(dst, v ?           hand.getVolatile(src) :           hand.get(src));
+            else if (t == double.class) hand.set(dst, v ? (double) hand.getVolatile(src) : (double) hand.get(src));
+            else if (t == float.class) hand.set(dst, v ? (float) hand.getVolatile(src) : (float) hand.get(src));
+            else if (t == char.class) hand.set(dst, v ? (char) hand.getVolatile(src) : (char) hand.get(src));
+            else if (t == byte.class) hand.set(dst, v ? (byte) hand.getVolatile(src) : (byte) hand.get(src));
+            else if (t == short.class) hand.set(dst, v ? (short) hand.getVolatile(src) : (short) hand.get(src));
+            else hand.set(dst, v ? hand.getVolatile(src) : hand.get(src));
         }
-    }
-
-    static <T> T handleWithContext(Field field, Supplier<T> action) {
-        try {
-            return action.get();
-        } catch (SecurityException | IllegalArgumentException e) {
-            throw cloningExceptionFor(field, e);
-        } catch (CloningException e) {
-            throw cloningExceptionFor(field, e.getCause());
-        }
-    }
-
-    static void handleWithContext(Field field, ThrowingRunnable action) {
-        try {
-            action.run();
-        } catch (SecurityException | IllegalArgumentException | ReflectiveOperationException e) {
-            throw cloningExceptionFor(field, e);
-        } catch (CloningException e) {
-            throw cloningExceptionFor(field, e.getCause());
-        }
-    }
-
-    private static CloningException cloningExceptionFor(Field field, Throwable t) {
-        return new CloningException(String.format("No access to field [%s] [%s] within class [%s]", field.getType(), field.getName(), field.getDeclaringClass()), t);
     }
 }

@@ -4,9 +4,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class FastClonerSetOf12 implements IFastCloner {
+public class FastClonerSetOf12 implements FastCloner {
+
     @SuppressWarnings("rawtypes")
-    public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {
+    public Object clone(final Object t, final DeepCloner cloner, final Map<Object, Object> clones) {
         Set set = (Set) t;
         Object[] a = set.toArray();
         if (set.size() == 1) {
