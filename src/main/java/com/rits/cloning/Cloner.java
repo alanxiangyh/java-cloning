@@ -36,17 +36,8 @@ public class Cloner {
     private static final DeepCloner NULL_CLONER = new NullClassCloner();
     private static final Field[] EMPTY_FIELD_ARRAY = new Field[0];
     private static final Set<Class<?>> BUILTIN_IMMUTABLES = Set.of(
-        void.class, Void.class,
-        byte.class, Byte.class,
-        boolean.class, Boolean.class,
-        char.class, Character.class,
-        short.class, Short.class,
-        int.class, Integer.class,
-        float.class, Float.class,
-        long.class, Long.class,
-        double.class, Double.class,
-        String.class, Class.class,
-        BigInteger.class, BigDecimal.class
+        Void.class, Byte.class, Boolean.class, Character.class, Short.class, Integer.class,
+        Float.class, Long.class, Double.class, Class.class, BigInteger.class, BigDecimal.class
     );
     private final InstantiationStrategy instantiationStrategy;
     private final Set<Class<?>> ignored = new HashSet<>();
@@ -450,7 +441,7 @@ public class Cloner {
         // Fast path: most common immutable types - avoid all map lookups
         // These classes are final and extremely common as field values,
         // so checking them directly is faster than any map lookup
-        if (BUILTIN_IMMUTABLES.contains(aClass)) {
+        if (aClass.isPrimitive() || BUILTIN_IMMUTABLES.contains(aClass)) {
             return o;
         }
 
@@ -508,10 +499,29 @@ public class Cloner {
 
     private Object applyCloningStrategy(Map<Object, Object> clones, Object o, Object fieldObject, Field field) {
         if (cloningStrategies != null) {
-            for (CloningStrategy strategy : cloningStrategies) {
-                CloningStrategy.Strategy s = strategy.strategyFor(o, field);
-                if (s == CloningStrategy.Strategy.NULL_INSTEAD_OF_CLONE) return null;
-                if (s == CloningStrategy.Strategy.SAME_INSTANCE_INSTEAD_OF_CLONE) return fieldObject;
+            for (CloningStrategy cloningStrategy : cloningStrategies) {
+                CloningStrategy.Strategy strategy = cloningStrategy.strategyFor(o, field);
+                switch (strategy) {
+                    case NULL_INSTEAD_OF_CLONE, DEFAULT_INSTEAD_OF_CLONE -> {
+                        if (fieldObject == null) {
+                            return null;
+                        }
+                        return switch (fieldObject) {
+                            case Byte b -> (byte) 0;
+                            case Short s -> (short) 0;
+                            case Integer i -> 0;
+                            case Long l -> (long) 0;
+                            case Character c -> (char) 0;
+                            case Float f -> 0.0f;
+                            case Double d -> 0.0;
+                            case Boolean b -> false;
+                            case null, default -> null;
+                        };
+                    }
+                    case SAME_INSTANCE_INSTEAD_OF_CLONE -> {
+                        return fieldObject;
+                    }
+                }
             }
         }
         return cloneInternal(fieldObject, clones);
