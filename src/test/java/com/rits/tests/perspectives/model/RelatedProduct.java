@@ -2,25 +2,22 @@ package com.rits.tests.perspectives.model;
 
 /**
  * @author kostantinos.kougios
- *
+ * <p>
  * 15 Nov 2010
  */
-public class RelatedProduct extends Product
-{
-	private Product	related;
+public class RelatedProduct extends Product {
 
-	public RelatedProduct(final int id, final String sku, final String title)
-	{
-		super(id, sku, title);
-	}
+    private Product related;
 
-	public Product getRelated()
-	{
-		return related;
-	}
+    public RelatedProduct(final int id, final String sku, final String title) {
+        super(id, sku, title);
+    }
 
-	public void setRelated(final Product related)
-	{
-		this.related = related;
-	}
+    public Product getRelated() {
+        return related;
+    }
+
+    public void setRelated(final Product related) {
+        this.related = related;
+    }
 }

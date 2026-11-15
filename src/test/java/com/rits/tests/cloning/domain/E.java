@@ -30,8 +30,8 @@ public class E {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof E e)) return false;
-		return Objects.equals(id, e.id) &&
-                Objects.equals(a, e.a);
+        return Objects.equals(id, e.id) &&
+            Objects.equals(a, e.a);
     }
 
     @Override

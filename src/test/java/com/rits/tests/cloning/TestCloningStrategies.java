@@ -1,8 +1,8 @@
 package com.rits.tests.cloning;
 
 import com.rits.cloning.Cloner;
-import com.rits.cloning.CloningStrategyFactory;
-import com.rits.cloning.ICloningStrategy;
+import com.rits.cloning.strategy.CloningStrategy;
+import com.rits.cloning.strategy.CloningStrategyFactory;
 import org.junit.jupiter.api.Test;
 
 import java.lang.annotation.ElementType;
@@ -15,50 +15,55 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TestCloningStrategies {
 
-	@Retention(RetentionPolicy.RUNTIME)
-	@Target(ElementType.FIELD)
-	@interface Ann {
-	}
+    @Test
+    public void annotatedClassPositive() {
+        Cloner cloner = Cloner.standard();
+        cloner.registerCloningStrategy(CloningStrategyFactory.annotatedField(Ann.class, CloningStrategy.Strategy.NULL_INSTEAD_OF_CLONE));
+        assertNull(cloner.deepClone(new AnnotatedExample()).o);
+    }
 
-	@SuppressWarnings("InnerClassMayBeStatic")
-	class Data {
-	}
-	class AnnotatedExample {
-		@Ann
-		public Data o = new Data();
-	}
+    @Test
+    public void annotatedClassNegative() {
+        Cloner cloner = Cloner.standard();
+        cloner.registerCloningStrategy(CloningStrategyFactory.annotatedField(Ann.class, CloningStrategy.Strategy.NULL_INSTEAD_OF_CLONE));
+        assertNotNull(cloner.deepClone(new NotAnnotatedExample()).o);
+    }
 
-	class NotAnnotatedExample {
-		public Data o = new Data();
-	}
+    @Test
+    public void annotatedClassSameInstancePositive() {
+        Cloner cloner = Cloner.standard();
+        cloner.registerCloningStrategy(CloningStrategyFactory.annotatedField(Ann.class, CloningStrategy.Strategy.SAME_INSTANCE_INSTEAD_OF_CLONE));
+        AnnotatedExample ae = new AnnotatedExample();
+        assertSame(ae.o, cloner.deepClone(ae).o);
+    }
 
-	@Test
-	public void annotatedClassPositive() {
-		Cloner cloner = Cloner.standard();
-		cloner.registerCloningStrategy(CloningStrategyFactory.annotatedField(Ann.class, ICloningStrategy.Strategy.NULL_INSTEAD_OF_CLONE));
-		assertNull(cloner.deepClone(new AnnotatedExample()).o);
-	}
+    @Test
+    public void annotatedClassSameInstanceNegative() {
+        Cloner cloner = Cloner.standard();
+        cloner.registerCloningStrategy(CloningStrategyFactory.annotatedField(Ann.class, CloningStrategy.Strategy.SAME_INSTANCE_INSTEAD_OF_CLONE));
+        NotAnnotatedExample ae = new NotAnnotatedExample();
+        assertNotSame(ae.o, cloner.deepClone(ae).o);
+    }
 
-	@Test
-	public void annotatedClassNegative() {
-		Cloner cloner = Cloner.standard();
-		cloner.registerCloningStrategy(CloningStrategyFactory.annotatedField(Ann.class, ICloningStrategy.Strategy.NULL_INSTEAD_OF_CLONE));
-		assertNotNull(cloner.deepClone(new NotAnnotatedExample()).o);
-	}
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    @interface Ann {
 
-	@Test
-	public void annotatedClassSameInstancePositive() {
-		Cloner cloner = Cloner.standard();
-		cloner.registerCloningStrategy(CloningStrategyFactory.annotatedField(Ann.class, ICloningStrategy.Strategy.SAME_INSTANCE_INSTEAD_OF_CLONE));
-		AnnotatedExample ae = new AnnotatedExample();
-		assertSame(ae.o, cloner.deepClone(ae).o);
-	}
+    }
 
-	@Test
-	public void annotatedClassSameInstanceNegative() {
-		Cloner cloner = Cloner.standard();
-		cloner.registerCloningStrategy(CloningStrategyFactory.annotatedField(Ann.class, ICloningStrategy.Strategy.SAME_INSTANCE_INSTEAD_OF_CLONE));
-		NotAnnotatedExample ae = new NotAnnotatedExample();
-		assertNotSame(ae.o, cloner.deepClone(ae).o);
-	}
+    @SuppressWarnings("InnerClassMayBeStatic")
+    class Data {
+
+    }
+
+    class AnnotatedExample {
+
+        @Ann
+        public Data o = new Data();
+    }
+
+    class NotAnnotatedExample {
+
+        public Data o = new Data();
+    }
 }
